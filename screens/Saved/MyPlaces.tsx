@@ -31,7 +31,7 @@ const MyPlaces = (props: Props) => {
 		<View style={styles.PageContainer}>
 			<View style={styles.Controls}>
 				<SearchBar
-					placeholder="Type Here..."
+					placeholder="Search..."
 					onChangeText={updateSearch}
 					value={search}
 					containerStyle={{
@@ -55,7 +55,7 @@ const MyPlaces = (props: Props) => {
 						name="plus"
 						size={25}
 						color={'white'}
-						style={{ marginRight: 15, marginLeft: 25 }}
+						style={{ marginRight: 15, marginLeft: 15 }}
 					/>
 				</Pressable>
 			</View>

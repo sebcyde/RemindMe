@@ -26,6 +26,7 @@ import Create from '../screens/Create/Create';
 import Settings from '../screens/Settings/Settings';
 import Saved from '../screens/Saved/Saved';
 import NewPlaceModal from '../screens/Modals/NewPlaceModal';
+import LocationDetailsModal from '../screens/Modals/LocationDetailsModal';
 
 export default function Navigation({
 	colorScheme,
@@ -64,15 +65,15 @@ function RootNavigator() {
 			<Stack.Group screenOptions={{ presentation: 'modal' }}>
 				<Stack.Screen name="Modal" component={ModalScreen} />
 				<Stack.Screen name="NewPlaceModal" component={NewPlaceModal} />
+				<Stack.Screen
+					name="LocationDetailsModal"
+					component={LocationDetailsModal}
+				/>
 			</Stack.Group>
 		</Stack.Navigator>
 	);
 }
 
-/**
- * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
- * https://reactnavigation.org/docs/bottom-tab-navigator
- */
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {

@@ -20,6 +20,7 @@ export type RootStackParamList = {
 	Root: NavigatorScreenParams<RootTabParamList> | undefined;
 	Modal: undefined;
 	NewPlaceModal: undefined;
+	LocationDetailsModal: undefined;
 	NotFound: undefined;
 };
 
