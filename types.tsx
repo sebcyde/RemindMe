@@ -22,6 +22,7 @@ export type RootStackParamList = {
 	NewPlaceModal: undefined;
 	LocationDetailsModal: undefined;
 	NotFound: undefined;
+	NewReminderModal: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -30,7 +31,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
 export type RootTabParamList = {
 	Dashboard: undefined;
 	Settings: undefined;
-	Create: undefined;
+	Reminders: undefined;
 	Saved: undefined;
 };
 

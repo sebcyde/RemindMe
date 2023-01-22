@@ -22,11 +22,12 @@ import {
 } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import Dashboard from '../screens/Dashboard/Dashboard';
-import Create from '../screens/Create/Create';
 import Settings from '../screens/Settings/Settings';
 import Saved from '../screens/Saved/Saved';
 import NewPlaceModal from '../screens/Modals/NewPlaceModal';
 import LocationDetailsModal from '../screens/Modals/LocationDetailsModal';
+import NewReminderModal from '../screens/Modals/NewReminderModal';
+import Reminders from '../screens/Reminders/Reminders';
 
 export default function Navigation({
 	colorScheme,
@@ -43,10 +44,6 @@ export default function Navigation({
 	);
 }
 
-/**
- * A root stack navigator is often used for displaying modals on top of all other content.
- * https://reactnavigation.org/docs/modal
- */
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
@@ -64,7 +61,16 @@ function RootNavigator() {
 			/>
 			<Stack.Group screenOptions={{ presentation: 'modal' }}>
 				<Stack.Screen name="Modal" component={ModalScreen} />
-				<Stack.Screen name="NewPlaceModal" component={NewPlaceModal} />
+				<Stack.Screen
+					name="NewReminderModal"
+					component={NewReminderModal}
+					options={{ title: 'Set New Reminder' }}
+				/>
+				<Stack.Screen
+					name="NewPlaceModal"
+					component={NewPlaceModal}
+					options={{ title: 'Add New Favourite' }}
+				/>
 				<Stack.Screen
 					name="LocationDetailsModal"
 					component={LocationDetailsModal}
@@ -111,12 +117,12 @@ function BottomTabNavigator() {
 				})}
 			/>
 			<BottomTab.Screen
-				name="Create"
-				component={Create}
+				name="Reminders"
+				component={Reminders}
 				options={{
 					tabBarStyle: { backgroundColor: Accent },
-					title: 'Create',
-					tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
+					title: 'Reminders',
+					tabBarIcon: ({ color }) => <TabBarIcon name="check" color={color} />,
 				}}
 			/>
 			<BottomTab.Screen
