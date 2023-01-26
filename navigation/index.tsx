@@ -69,7 +69,7 @@ function RootNavigator() {
 				<Stack.Screen
 					name="NewPlaceModal"
 					component={NewPlaceModal}
-					options={{ title: 'Add New Favourite' }}
+					options={{ title: 'Search Location' }}
 				/>
 				<Stack.Screen
 					name="LocationDetailsModal"

@@ -9,19 +9,6 @@ type Props = {};
 
 const Reminders = (props: Props) => {
 	const navigation = useNavigation();
-	// const searchAddress = async (address: string) => {
-	// 	const res = await Geocoder.geocodeAddress(address);
-	// 	console.log(res);
-	// 	this.map.animateToRegion(
-	// 		{
-	// 			latitude: res[0].position.lat,
-	// 			longitude: res[0].position.lng,
-	// 			latitudeDelta: 0.01,
-	// 			longitudeDelta: 0.01,
-	// 		},
-	// 		2000
-	// 	);
-	// };
 
 	return (
 		<ScrollView style={styles.CreatePageContainer}>

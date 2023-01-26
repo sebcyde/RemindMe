@@ -1,15 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import { Platform, StyleSheet } from 'react-native';
-import { Input, Switch } from '@rneui/themed';
-import {
-	GooglePlaceData,
-	GooglePlacesAutocomplete,
-} from 'react-native-google-places-autocomplete';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Text, View } from '../../components/Themed';
-import { useState } from 'react';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { UpdateLocationData } from '../../Store/NewReminderSlice';
+import { useNavigation } from '@react-navigation/native';
 
 export default function NewPlaceModal() {
-	const [SearchData, setSearchData] = useState<GooglePlaceData>();
+	const navigation = useNavigation();
+	const dispatch = useDispatch();
 
 	return (
 		<View style={styles.container}>
@@ -19,12 +19,11 @@ export default function NewPlaceModal() {
 				debounce={400}
 				enablePoweredByContainer={false}
 				fetchDetails
-				onPress={(data, details = null) => {
-					if (data) {
-						setSearchData(data);
+				onPress={async (data, details = null) => {
+					if (details) {
+						dispatch(UpdateLocationData(details));
+						navigation.goBack();
 					}
-					console.log('data', data);
-					console.log('details', details);
 				}}
 				query={{
 					key: 'AIzaSyDuAeTARkSBb7cYQbb1_l5WlOB9bdjmdo4',
@@ -45,7 +44,6 @@ export default function NewPlaceModal() {
 					errorStyle: { color: 'red' },
 				}}
 			/>
-			<Text>{JSON.stringify(SearchData)}</Text>
 			<StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
 		</View>
 	);

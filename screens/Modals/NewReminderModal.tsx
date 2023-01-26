@@ -5,10 +5,11 @@ import {
 	TextInput,
 	ScrollView,
 	StyleSheet,
+	Pressable,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '@rneui/base';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Accent } from '../../constants/Colors';
 import DateTimePicker, {
 	DateTimePickerEvent,
@@ -17,21 +18,31 @@ import SelectDropdown from 'react-native-select-dropdown';
 import { FontAwesome } from '@expo/vector-icons';
 import {
 	GooglePlaceData,
+	GooglePlaceDetail,
 	GooglePlacesAutocomplete,
 } from 'react-native-google-places-autocomplete';
+import navigation from '../../navigation';
+import LargeButton from '../../components/Global/LargeButton';
+import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 type Props = {};
 
 const NewReminderModal = (props: Props) => {
+	const [ReminderTime, setReminderTime] = useState(new Date(1598051730000));
+	const LocationData = useSelector((state: any) => state);
 	const [StartTime, setStartTime] = useState(new Date(1598051730000));
 	const [EndTime, setEndTime] = useState(new Date(1598051730000));
 	const [date, setDate] = useState(new Date(1598051730000));
 	const [Important, setImportant] = useState(false);
-	const [SearchData, setSearchData] = useState<GooglePlaceData>();
+	const [SearchData, setSearchData] = useState<GooglePlaceDetail | string>(
+		'Location...'
+	);
 	const [ReminderOption, setReminderOption] = useState('When I arrive');
 	const [Description, setDescription] = useState(
 		'Write a short description...'
 	);
+	const navigation = useNavigation();
 
 	const ReminderOptions = [
 		'When I arrive',
@@ -39,6 +50,15 @@ const NewReminderModal = (props: Props) => {
 		"When I'm nearby",
 		'At a specific time',
 	];
+
+	useEffect(() => {
+		console.log('Location Updated');
+		console.log(
+			'Component Location:',
+			LocationData.NewLocationState.LocationData
+		);
+		setSearchData(LocationData.NewLocationState.LocationData);
+	}, [LocationData]);
 
 	const onChange = (event: any, selectedDate: any) => {
 		const currentDate = selectedDate;
@@ -55,6 +75,11 @@ const NewReminderModal = (props: Props) => {
 		setEndTime(currentTime);
 	};
 
+	const ReminderTimeChange = (event: any, selectedTime: any) => {
+		const currentTime = selectedTime;
+		setReminderTime(currentTime);
+	};
+
 	const toggleSwitch = () => {
 		setImportant(!Important);
 	};
@@ -67,7 +92,11 @@ const NewReminderModal = (props: Props) => {
 		<ScrollView style={styles.CreatePageContainer}>
 			<View style={styles.ReminderContainer}>
 				<View style={styles.ReminderRow}>
-					<TextInput placeholder="Title" style={styles.ReminderNameInput} />
+					<TextInput
+						placeholder="Reminder title..."
+						style={styles.ReminderNameInput}
+						placeholderTextColor="darkgray"
+					/>
 				</View>
 				<View style={styles.ReminderRow}>
 					<Text style={styles.ReminderRowText}>Remind me...</Text>
@@ -97,7 +126,6 @@ const NewReminderModal = (props: Props) => {
 						defaultValue={ReminderOption}
 						onSelect={(selectedItem, index) => {
 							setReminderOption(selectedItem);
-							console.log(selectedItem, index);
 						}}
 						buttonTextAfterSelection={(selectedItem, index) => {
 							// text represented after item is selected
@@ -111,7 +139,35 @@ const NewReminderModal = (props: Props) => {
 						}}
 					/>
 				</View>
+
+				{ReminderOption == 'At a specific time' ? (
+					<View style={styles.ReminderRowContainer}>
+						<Text style={styles.OptionDetailsTitle}>Remind me at...</Text>
+						<DateTimePicker
+							testID="dateTimePicker"
+							value={ReminderTime}
+							mode={'time'}
+							is24Hour={true}
+							onChange={ReminderTimeChange}
+						/>
+					</View>
+				) : null}
+
 				<View style={styles.ReminderRow}>
+					<Pressable
+						onPress={() => navigation.navigate('NewPlaceModal')}
+						style={styles.LocationButton}
+					>
+						<Text style={styles.LocationButtonText}>
+							{typeof SearchData !== 'string'
+								? `${SearchData.address_components[0]} ${SearchData.address_components[1]} ${SearchData.address_components[2]}`
+								: SearchData}
+							Location...
+						</Text>
+					</Pressable>
+				</View>
+
+				{/* <View style={styles.ReminderRow}>
 					<GooglePlacesAutocomplete
 						nearbyPlacesAPI="GooglePlacesSearch"
 						placeholder="Event Location..."
@@ -119,11 +175,10 @@ const NewReminderModal = (props: Props) => {
 						enablePoweredByContainer={false}
 						fetchDetails
 						onPress={(data, details = null) => {
-							if (data) {
-								setSearchData(data);
+							if (details) {
+								setSearchData(details);
+								console.log('Search Details:', details);
 							}
-							console.log('data', data);
-							console.log('details', details);
 						}}
 						query={{
 							key: 'AIzaSyDuAeTARkSBb7cYQbb1_l5WlOB9bdjmdo4',
@@ -132,22 +187,31 @@ const NewReminderModal = (props: Props) => {
 						}}
 						styles={{
 							container: {
-								marginHorizontal: 10,
+								width: '100%',
+								backgroundColor: 'transparent',
+								color: 'lightgray',
+								marginVertical: 0,
+								paddingVertical: 0,
 							},
 							textInput: {
-								color: 'black',
+								marginBottom: 0,
+								paddingHorizontal: 0,
+								paddingVertical: 0,
+								height: 30,
+								color: 'lightgray',
+								backgroundColor: 'transparent',
+								width: '100%',
+								borderBottomWidth: 0,
+								fontSize: 17,
 							},
 						}}
 						textInputProps={{
-							placeholderTextColor: 'gray',
+							placeholderTextColor: 'darkgray',
 							leftIcon: { type: 'font-awesome', name: 'chevron-left' },
 							errorStyle: { color: 'red' },
 						}}
 					/>
-				</View>
-
-				<Text style={styles.ExampleText}>{SearchData?.description}</Text>
-				<Text style={styles.ExampleText}>{SearchData?.place_id}</Text>
+				</View> */}
 			</View>
 
 			{/* // Map Box */}
@@ -162,7 +226,21 @@ const NewReminderModal = (props: Props) => {
 						longitudeDelta: 0.0121,
 					}}
 					onPress={onMapPress}
-				/>
+				>
+					{/* {LocationData && (
+						<Marker
+							coordinate={{
+								latitude:
+									LocationData.NewLocationState.LocationData.geometry.location
+										.lat,
+
+								longitude:
+									LocationData.NewLocationState.LocationData.geometry.location
+										.lng,
+							}}
+						/>
+					)} */}
+				</MapView>
 			</View>
 
 			{/* // Options Boxes */}
@@ -207,7 +285,7 @@ const NewReminderModal = (props: Props) => {
 			</View>
 
 			{/* // Description Boxes */}
-			<View>
+			{/* <View>
 				<Text style={styles.DescriptionTitle}>Description</Text>
 				<TextInput
 					multiline={true}
@@ -216,15 +294,19 @@ const NewReminderModal = (props: Props) => {
 					value={Description}
 					style={styles.Description}
 				/>
-			</View>
+			</View> */}
+
+			<Pressable onPress={() => console.log('Pressed')} style={styles.Button}>
+				<Text style={styles.ButtonText}>Save Reminder</Text>
+			</Pressable>
 		</ScrollView>
 	);
-}; 
+};
 
 const styles = StyleSheet.create({
 	CreatePageContainer: {
 		paddingHorizontal: 15,
-		flex: 1,
+		height: '100%',
 	},
 	ReminderContainer: {
 		flex: 1,
@@ -246,20 +328,28 @@ const styles = StyleSheet.create({
 	},
 	ReminderRowText: {
 		fontSize: 17,
-		color: 'lightgray',
+		color: 'white',
 		paddingHorizontal: 0,
 		marginRight: 'auto',
 	},
 	ReminderNameInput: {
-		color: 'lightgray',
 		margin: 0,
 		flex: 1,
 		width: '100%',
-		fontSize: 17,
+		fontSize: 20,
+		marginBottom: 5,
 	},
 	ExampleText: {
-		color: 'lightgray',
+		color: 'white',
 		width: '100%',
+	},
+	LocationButton: {
+		paddingVertical: 10,
+		paddingBottom: 0,
+	},
+	LocationButtonText: {
+		color: 'lightgray',
+		fontSize: 17,
 	},
 	MapContainer: {
 		flex: 1,
@@ -278,6 +368,17 @@ const styles = StyleSheet.create({
 		backgroundColor: Accent,
 		borderRadius: 10,
 		padding: 10,
+	},
+	ReminderRowContainer: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignContent: 'center',
+		alignItems: 'center',
+		width: '100%',
+		paddingHorizontal: 20,
+		paddingVertical: 10,
+		paddingBottom: 0,
 	},
 	OptionsRowContainer: {
 		display: 'flex',
@@ -305,6 +406,23 @@ const styles = StyleSheet.create({
 		fontSize: 17,
 		borderRadius: 10,
 		backgroundColor: Accent,
+	},
+	Button: {
+		backgroundColor: 'navy',
+		width: '100%',
+		borderRadius: 10,
+		paddingHorizontal: 45,
+		paddingVertical: 19,
+		marginBottom: 30,
+		alignSelf: 'center',
+	},
+	ButtonText: {
+		color: 'white',
+		fontSize: 20,
+		textTransform: 'capitalise',
+		fontWeight: '600',
+		width: '100%',
+		textAlign: 'center',
 	},
 });
 
